@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
 class RetrofitImplementation: DataSource<List<DataModel>> {
     override fun getData(word: String): Observable<List<DataModel>> {

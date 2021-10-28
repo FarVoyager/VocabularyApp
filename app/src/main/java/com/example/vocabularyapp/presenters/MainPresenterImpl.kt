@@ -6,19 +6,14 @@ import com.example.vocabularyapp.interactors.MainInteractor
 import com.example.vocabularyapp.model.local.DataSourceLocal
 import com.example.vocabularyapp.model.remote.DataSourceRemote
 import com.example.vocabularyapp.model.RepositoryImplementation
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 
 class MainPresenterImpl<T: AppState, V: com.example.vocabularyapp.contracts.View>(
-    // Обратите внимание, что Интерактор мы создаём сразу в конструкторе
-    private val interactor: MainInteractor = MainInteractor(
-        RepositoryImplementation(DataSourceRemote()),
-        RepositoryImplementation(DataSourceLocal())
-    ),
-    protected val compositeDisposable: CompositeDisposable = CompositeDisposable(),
-//    protected val schedulerProvider: SchedulerProvider = SchedulerProvider()
+    private val scheduler: Scheduler
 ): Presenter<T, V> {
     // Ссылка на View, никакого контекста
     private var currentView: V? = null
@@ -27,6 +22,15 @@ class MainPresenterImpl<T: AppState, V: com.example.vocabularyapp.contracts.View
         if (view != currentView) currentView = view
 
     }
+
+    // Обратите внимание, что Интерактор мы создаём сразу в конструкторе
+    private val interactor: MainInteractor = MainInteractor(
+        RepositoryImplementation(DataSourceRemote()),
+        RepositoryImplementation(DataSourceLocal())
+    )
+
+    protected val compositeDisposable: CompositeDisposable = CompositeDisposable()
+
     // View скоро будет уничтожена: прерываем все загрузки и обнуляем ссылку,
     // чтобы предотвратить утечки памяти и NPE
     override fun detachView(view: V) {

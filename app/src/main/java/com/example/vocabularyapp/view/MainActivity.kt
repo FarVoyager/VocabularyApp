@@ -12,8 +12,12 @@ import com.example.vocabularyapp.contracts.View
 import com.example.vocabularyapp.databinding.ActivityMainBinding
 import com.example.vocabularyapp.model.DataModel
 import com.example.vocabularyapp.presenters.MainPresenterImpl
+import io.reactivex.Scheduler
+import javax.inject.Inject
 
-class MainActivity : BaseActivity<AppState>(), View {
+class MainActivity : AbsActivity(), View {
+
+
 
     private lateinit var binding: ActivityMainBinding
 
@@ -26,7 +30,7 @@ class MainActivity : BaseActivity<AppState>(), View {
         }
 
     override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenterImpl()
+        return MainPresenterImpl(scheduler)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
