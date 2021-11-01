@@ -7,8 +7,7 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 @Module
-interface StorageModule {
+interface ActivityModule {
     @ContributesAndroidInjector
-    fun bindMainActivity(): MainActivity
-
+    abstract fun contributeMainActivity(): MainActivity
 }

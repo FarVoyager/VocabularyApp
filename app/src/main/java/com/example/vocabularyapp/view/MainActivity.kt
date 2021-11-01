@@ -1,23 +1,28 @@
 package com.example.vocabularyapp.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.vocabularyapp.AppState
 import com.example.vocabularyapp.R
-import com.example.vocabularyapp.contracts.Presenter
-import com.example.vocabularyapp.contracts.View
 import com.example.vocabularyapp.databinding.ActivityMainBinding
+import com.example.vocabularyapp.interactors.MainInteractor
 import com.example.vocabularyapp.model.DataModel
-import com.example.vocabularyapp.presenters.MainPresenterImpl
-import io.reactivex.Scheduler
+import com.example.vocabularyapp.viewModel.MainViewModel
+import dagger.android.AndroidInjection
 import javax.inject.Inject
 
-class MainActivity : AbsActivity(), View {
+class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
+    // Кастомная фабрика для нашей вьюмодели с аргументом
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    override val model: MainViewModel by lazy {
+        ViewModelProvider (this, viewModelFactory).get(MainViewModel::class.java)
+    }
 
     private lateinit var binding: ActivityMainBinding
 
@@ -29,19 +34,24 @@ class MainActivity : AbsActivity(), View {
             }
         }
 
-    override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenterImpl(scheduler)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        //сообщаем Dagger что в активити нужно что-то инжектить
+        AndroidInjection.inject(this)
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Подписываемся на изменения
+        model.subscribe().observe(this, { renderData(it) })
+
+        // Обработка нажатия fab
         binding.searchFab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object : SearchDialogFragment.OnSearchClickListener {
                 override fun onClick(searchWord: String) {
-                  presenter.getData(searchWord, true)
+                    // У ViewModel мы получаем LiveData через метод getData
+                  model.getData(searchWord, isNetworkAvailable)
                 }
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
@@ -85,7 +95,7 @@ class MainActivity : AbsActivity(), View {
         showViewError()
         binding.errorTextview.text = error ?: getString(R.string.undefined_error)
         binding.reloadButton.setOnClickListener {
-            presenter.getData("hi", true)
+            model.getData("hi", true)
         }
     }
 

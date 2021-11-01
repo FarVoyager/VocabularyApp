@@ -4,8 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/AndroidStudioProjects/VocabularyApp/app/src/main/res/drawable/bottom_sheet_dialog_background.xml" value="0.25625" />
+        <entry key="..\:/AndroidStudioProjects/VocabularyApp/app/src/main/res/drawable/ic_search.xml" value="0.25625" />
+        <entry key="..\:/AndroidStudioProjects/VocabularyApp/app/src/main/res/drawable/text_input_cursor.xml" value="0.25625" />
         <entry key="..\:/AndroidStudioProjects/VocabularyApp/app/src/main/res/layout/activity_base.xml" value="0.25416666666666665" />
-        <entry key="..\:/AndroidStudioProjects/VocabularyApp/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/AndroidStudioProjects/VocabularyApp/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/AndroidStudioProjects/VocabularyApp/app/src/main/res/layout/dialog_translation.xml" value="0.2" />
         <entry key="..\:/AndroidStudioProjects/VocabularyApp/app/src/main/res/layout/recycler_view_item.xml" value="0.25416666666666665" />
       </map>

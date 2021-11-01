@@ -1,21 +1,22 @@
 package com.example.vocabularyapp.di
 
+import android.app.Application
 import android.content.Context
-import android.widget.ImageView
-import com.example.vocabularyapp.di.modules.ApiModule
+import com.example.vocabularyapp.di.modules.ActivityModule
 import com.example.vocabularyapp.di.modules.InteractorModule
-import com.example.vocabularyapp.di.modules.StorageModule
-import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Router
+import com.example.vocabularyapp.di.modules.RepostioryModule
+import com.example.vocabularyapp.di.modules.ViewModelModule
+import com.example.vocabularyapp.schedulerProvider.SchedulerProvider
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
 import io.reactivex.Scheduler
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ApiModule::class, StorageModule::class, AndroidInjectionModule::class, InteractorModule::class])
+@Component(modules = [ActivityModule::class, InteractorModule::class, RepostioryModule::class, ViewModelModule::class, AndroidInjectionModule::class])
 interface AppComponent: AndroidInjector<App> {
     @Component.Builder
     interface Builder {
@@ -24,8 +25,13 @@ interface AppComponent: AndroidInjector<App> {
         fun withContext(context: Context): Builder
 
         @BindsInstance
-        fun withScheduler(scheduler: Scheduler): Builder
+        fun withApplication(application: Application): Builder
+
+        @BindsInstance
+        fun withScheduler(scheduler: SchedulerProvider): Builder
 
         fun build(): AppComponent
     }
+
+    override fun inject(app: App)
 }
