@@ -1,35 +1,38 @@
 package com.example.vocabularyapp.view
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.vocabularyapp.AppState
-import com.example.vocabularyapp.R
-import com.example.vocabularyapp.contracts.Presenter
-import com.example.vocabularyapp.contracts.View
+import com.example.vocabularyapp.contracts.Interactor
+import com.example.vocabularyapp.utils.isOnline
+import com.example.vocabularyapp.viewModel.BaseViewModel
+import javax.inject.Inject
 
-abstract class BaseActivity<T: AppState> : AppCompatActivity(), View {
+abstract class BaseActivity<T: AppState, I: Interactor<T>> : AppCompatActivity() {
 
-    protected lateinit var presenter: Presenter<T, View>
+    abstract val model: BaseViewModel<T>
 
-    protected abstract fun  createPresenter(): Presenter<T, View>
+    @Inject
+    lateinit var context: Context
 
-    abstract override fun renderData(appState: AppState)
+    protected var isNetworkAvailable = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter = createPresenter()
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        isNetworkAvailable = isOnline(context)
     }
 
-    // Когда View готова отображать данные, передаём ссылку на View в презентер
-    override fun onStart() {
-        super.onStart()
-        presenter.attachView(this)
+    override fun onResume() {
+        super.onResume()
+        isNetworkAvailable = isOnline(applicationContext)
+        if (!isNetworkAvailable) {
+            Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    // При пересоздании или уничтожении View удаляем ссылку, иначе в презентере
-    // будет ссылка на несуществующую View
-    override fun onStop() {
-        super.onStop()
-        presenter.detachView(this)
-    }
+    abstract fun renderData(appState: T)
+
 }
