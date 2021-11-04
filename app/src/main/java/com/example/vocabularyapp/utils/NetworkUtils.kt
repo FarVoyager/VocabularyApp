@@ -15,15 +15,9 @@ fun isOnline(context: Context): Boolean {
             connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (netInfo != null) {
             when {
-                netInfo.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                    return true
-                }
-                netInfo.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                    return true
-                }
-                netInfo.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-                    return true
-                }
+                netInfo.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> { return true }
+                netInfo.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> { return true }
+                netInfo.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> { return true }
             }
         }
     } else {

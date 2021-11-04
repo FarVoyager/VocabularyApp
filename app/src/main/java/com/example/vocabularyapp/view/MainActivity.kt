@@ -12,17 +12,14 @@ import com.example.vocabularyapp.interactors.MainInteractor
 import com.example.vocabularyapp.model.DataModel
 import com.example.vocabularyapp.viewModel.MainViewModel
 import dagger.android.AndroidInjection
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.java.KoinJavaComponent
 import javax.inject.Inject
 
 class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
-    // Кастомная фабрика для нашей вьюмодели с аргументом
-    @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    override val model: MainViewModel by lazy {
-        ViewModelProvider (this, viewModelFactory).get(MainViewModel::class.java)
-    }
+    override val model: MainViewModel by viewModel()
 
     private lateinit var binding: ActivityMainBinding
 
@@ -37,13 +34,12 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         //сообщаем Dagger что в активити нужно что-то инжектить
         AndroidInjection.inject(this)
+        // Подписываемся на изменения MainViewModel
+        model.subscribe().observe(this, { renderData(it) })
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Подписываемся на изменения
-        model.subscribe().observe(this, { renderData(it) })
 
         // Обработка нажатия fab
         binding.searchFab.setOnClickListener {

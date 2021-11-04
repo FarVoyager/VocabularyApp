@@ -6,30 +6,32 @@ import android.os.PersistableBundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.vocabularyapp.AppState
+import com.example.vocabularyapp.R
 import com.example.vocabularyapp.contracts.Interactor
 import com.example.vocabularyapp.utils.isOnline
 import com.example.vocabularyapp.viewModel.BaseViewModel
+import org.koin.android.ext.android.inject
+import org.koin.core.qualifier.named
+import org.koin.java.KoinJavaComponent.inject
 import javax.inject.Inject
 
 abstract class BaseActivity<T: AppState, I: Interactor<T>> : AppCompatActivity() {
 
     abstract val model: BaseViewModel<T>
 
-    @Inject
-    lateinit var context: Context
-
+    private val isOnline: Boolean by inject(named("context"))
     protected var isNetworkAvailable = false
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
-        isNetworkAvailable = isOnline(context)
+        isNetworkAvailable = isOnline
     }
 
     override fun onResume() {
         super.onResume()
-        isNetworkAvailable = isOnline(applicationContext)
+        isNetworkAvailable = isOnline
         if (!isNetworkAvailable) {
-            Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.NO_INT_MSG), Toast.LENGTH_SHORT).show()
         }
     }
 

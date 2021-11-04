@@ -2,6 +2,7 @@ package com.example.vocabularyapp.viewModel
 
 import androidx.lifecycle.LiveData
 import com.example.vocabularyapp.AppState
+import com.example.vocabularyapp.contracts.Interactor
 import com.example.vocabularyapp.interactors.MainInteractor
 import com.example.vocabularyapp.model.RepositoryImplementation
 import com.example.vocabularyapp.model.local.DataSourceLocal
@@ -12,13 +13,16 @@ import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
+import org.koin.android.ext.android.inject
+import org.koin.java.KoinJavaComponent.inject
 import java.lang.Appendable
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(
-    private val interactor: MainInteractor,
+class MainViewModel(
+    private val interactor: Interactor<AppState>,
     private val scheduler: ISchedulerProvider
 ): BaseViewModel<AppState>() {
+
     // В этой переменной хранится последнее состояние Activity
     private var appState: AppState? = null
 

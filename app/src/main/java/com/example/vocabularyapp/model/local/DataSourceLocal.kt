@@ -6,8 +6,7 @@ import io.reactivex.Observable
 import javax.inject.Inject
 
 class DataSourceLocal(private val remoteProvider: RoomDataBaseImplementation = RoomDataBaseImplementation()
-):
-        DataSource<List<DataModel>> {
+): DataSource<List<DataModel>> {
     override fun getData(word: String): Observable<List<DataModel>> =
         remoteProvider.getData(word)
 }
