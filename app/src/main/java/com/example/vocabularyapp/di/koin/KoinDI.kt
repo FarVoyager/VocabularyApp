@@ -26,7 +26,6 @@ import org.koin.dsl.module
 object KoinDI {
     fun getInteractorModule() = module {
 
-        single<ISchedulerProvider> { SchedulerProvider() }
         single(named("context")) { isOnline(androidContext()) }
 
         factory<DataSource<List<DataModel>>>(named(SOURCE_REMOTE)) { DataSourceRemote(RetrofitImplementation()) }
@@ -38,7 +37,7 @@ object KoinDI {
         single<Interactor<AppState>> { MainInteractor(remoteRepository = get(named(NAME_REMOTE)), localRepository = get(
             named(NAME_LOCAL))) }
 
-        viewModel { MainViewModel(interactor = get(), scheduler = get()) }
+        viewModel { MainViewModel(interactor = get()) }
     }
 }
 
