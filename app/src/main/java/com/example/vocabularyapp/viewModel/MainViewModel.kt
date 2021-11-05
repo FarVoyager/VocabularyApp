@@ -16,7 +16,7 @@ class MainViewModel(
     }
 
     private val viewModelCoroutineScope = CoroutineScope(
-        Dispatchers.Main
+        Dispatchers.IO
                 + SupervisorJob()
                 + CoroutineExceptionHandler { _, throwable ->
             handleError(throwable)
@@ -31,9 +31,8 @@ class MainViewModel(
     }
 
     private suspend fun startInteractor(word: String, online: Boolean) =
-        withContext(Dispatchers.IO) {
             liveData.postValue(interactor.getData(word, online))
-        }
+
 
      private fun handleError(error: Throwable) {
         liveData.postValue(AppState.Error(error))
