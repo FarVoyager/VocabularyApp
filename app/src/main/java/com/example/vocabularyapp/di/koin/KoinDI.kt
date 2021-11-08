@@ -20,6 +20,7 @@ import com.example.vocabularyapp.viewModel.MainViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
+import org.koin.core.scope.get
 import org.koin.dsl.module
 
 
@@ -31,11 +32,10 @@ object KoinDI {
         factory<DataSource<List<DataModel>>>(named(SOURCE_REMOTE)) { DataSourceRemote(RetrofitImplementation()) }
         factory<DataSource<List<DataModel>>>(named(SOURCE_LOCAL)) { DataSourceLocal(RoomDataBaseImplementation()) }
 
-        single<Repository<List<DataModel>>>(named(NAME_REMOTE)) { RepositoryImplementation(get(named("SOURCE_REMOTE")))  }
-        single<Repository<List<DataModel>>>(named(NAME_LOCAL)) { RepositoryImplementation(get(named("SOURCE_LOCAL")))  }
+        single<Repository<List<DataModel>>>(named(NAME_REMOTE)) { RepositoryImplementation(dataSource = get(named(SOURCE_REMOTE))) }
+        single<Repository<List<DataModel>>>(named(NAME_LOCAL)) { RepositoryImplementation(dataSource = get(named(SOURCE_LOCAL))) }
 
-        single<Interactor<AppState>> { MainInteractor(remoteRepository = get(named(NAME_REMOTE)), localRepository = get(
-            named(NAME_LOCAL))) }
+        single<Interactor<AppState>> { MainInteractor(remoteRepository = get(named(NAME_REMOTE)), localRepository = get(named(NAME_LOCAL))) }
 
         viewModel { MainViewModel(interactor = get()) }
     }

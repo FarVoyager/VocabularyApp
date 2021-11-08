@@ -11,10 +11,6 @@ class MainViewModel(
 
     private var jobGetData: Job? = null
 
-    fun subscribe(): LiveData<AppState> {
-        return liveData
-    }
-
     private val viewModelCoroutineScope = CoroutineScope(
         Dispatchers.IO
                 + SupervisorJob()
@@ -22,6 +18,9 @@ class MainViewModel(
             handleError(throwable)
         })
 
+    fun subscribe(): LiveData<AppState> {
+        return liveData
+    }
 
     override fun getData(word: String, isOnline: Boolean) {
         liveData.postValue(AppState.Loading(null))
@@ -33,7 +32,6 @@ class MainViewModel(
     private suspend fun startInteractor(word: String, online: Boolean) =
             liveData.postValue(interactor.getData(word, online))
 
-
      private fun handleError(error: Throwable) {
         liveData.postValue(AppState.Error(error))
     }
@@ -41,6 +39,6 @@ class MainViewModel(
     override fun onCleared() {
         liveData.postValue(AppState.Success(null))
         super.onCleared()
-        jobGetData?.cancel()
+        viewModelCoroutineScope.cancel()
     }
 }

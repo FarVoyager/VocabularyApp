@@ -20,7 +20,6 @@ import javax.inject.Inject
 class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     override val model: MainViewModel by viewModel()
-
     private lateinit var binding: ActivityMainBinding
 
     private var adapter: MainAdapter? = null
@@ -33,7 +32,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //сообщаем Dagger что в активити нужно что-то инжектить
-        AndroidInjection.inject(this)
+//        AndroidInjection.inject(this)
         // Подписываемся на изменения MainViewModel
         model.subscribe().observe(this, { renderData(it) })
 
