@@ -1,119 +1,102 @@
 package com.example.vocabularyapp.view
 
 import android.os.Bundle
-import android.widget.Toast
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.vocabularyapp.AppState
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.marginStart
+import androidx.core.view.marginTop
 import com.example.vocabularyapp.R
-import com.example.vocabularyapp.databinding.ActivityMainBinding
-import com.example.vocabularyapp.interactors.MainInteractor
-import com.example.vocabularyapp.model.DataModel
+import com.example.vocabularyapp.utils.screens.IScreens
 import com.example.vocabularyapp.viewModel.MainViewModel
-import dagger.android.AndroidInjection
+import com.example.vocabularyapp.viewModel.WordListViewModel
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.java.KoinJavaComponent
-import javax.inject.Inject
 
-class MainActivity : BaseActivity<AppState, MainInteractor>() {
+class MainActivity : AppCompatActivity(){
 
-    override val model: MainViewModel by viewModel()
-    private lateinit var binding: ActivityMainBinding
+    private val router by inject<Router>()
+    private val model: MainViewModel by viewModel()
+    private val screens by inject<IScreens>()
+    private val navigatorHolder by inject<NavigatorHolder>()
+    private val navigator = AppNavigator(this, android.R.id.content)
 
-    private var adapter: MainAdapter? = null
-    private val onListItemClickListener: MainAdapter.OnListItemClickListener =
-        object : MainAdapter.OnListItemClickListener {
-            override fun onItemClick(data: DataModel) {
-                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //сообщаем Dagger что в активити нужно что-то инжектить
-//        AndroidInjection.inject(this)
-        // Подписываемся на изменения MainViewModel
-        model.subscribe().observe(this, { renderData(it) })
-
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        // Обработка нажатия fab
-        binding.searchFab.setOnClickListener {
-            val searchDialogFragment = SearchDialogFragment.newInstance()
-            searchDialogFragment.setOnSearchClickListener(object : SearchDialogFragment.OnSearchClickListener {
-                override fun onClick(searchWord: String) {
-                    // У ViewModel мы получаем LiveData через метод getData
-                  model.getData(searchWord, isNetworkAvailable)
-                }
-            })
-            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
-        }
+        setContentView(R.layout.activity_main)
+        model.subscribe().observe(this, { })
+        initToolbar()
+        savedInstanceState ?: initMainFragment()
     }
 
-    override fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Success -> {
-                val dataModel = appState.data
-                if (dataModel.isNullOrEmpty()) {
-                    showErrorScreen(getString(R.string.empty_server_response_on_success))
-                } else {
-                    showViewSuccess()
-                    if (adapter == null) {
-                        binding.mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
-                        binding.mainActivityRecyclerview.adapter = MainAdapter(onListItemClickListener, dataModel)
-                    } else {
-                        adapter!!.setData(dataModel)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+
+        when (id) {
+            R.id.action_search -> {
+                println("BEB clicked")
+                val textInput = EditText(this)
+                val alertDialog = AlertDialog.Builder(this)
+                alertDialog
+                    .setTitle("Поиск")
+                    .setMessage("Введите слово для поиска")
+                    .setView(R.layout.edit_text_search)
+                    .setPositiveButton("OK") { dialog, id ->
+                        //получить текст и запросить в БД
+
                     }
-                }
+                    .setNegativeButton("Отмена") { dialog, id ->
+                        dialog.dismiss()
+                    }
+                    .show()
+                return true
             }
-            is AppState.Loading -> {
-                showViewLoading()
-                if (appState.progress != null) {
-                    binding.progressBarHorizontal.visibility = android.view.View.VISIBLE
-                    binding.progressBarRound.visibility = android.view.View.GONE
-                    binding.progressBarHorizontal.progress = appState.progress
-                } else {
-                    binding.progressBarHorizontal.visibility = android.view.View.GONE
-                    binding.progressBarRound.visibility = android.view.View.VISIBLE
-                }
-            }
-            is AppState.Error -> {
-                showErrorScreen(appState.error.message)
+            R.id.action_history -> {
+
+
+                return true
             }
         }
+        return true
     }
 
-    private fun showErrorScreen(error: String?) {
-        showViewError()
-        binding.errorTextview.text = error ?: getString(R.string.undefined_error)
-        binding.reloadButton.setOnClickListener {
-            model.getData("hi", true)
-        }
+    private fun initMainFragment() {
+        supportFragmentManager.beginTransaction().replace(R.id.main_activity_container, WordListFragment.newInstance()).commit()
     }
 
-    private fun showViewSuccess() {
-        binding.successLinearLayout.visibility = android.view.View.VISIBLE
-        binding.loadingFrameLayout.visibility = android.view.View.GONE
-        binding.errorLinearLayout.visibility = android.view.View.GONE
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        navigatorHolder.setNavigator(navigator)
     }
 
-    private fun showViewLoading() {
-        binding.successLinearLayout.visibility = android.view.View.GONE
-        binding.loadingFrameLayout.visibility = android.view.View.VISIBLE
-        binding.errorLinearLayout.visibility = android.view.View.GONE
+    override fun onPause() {
+        super.onPause()
+        navigatorHolder.removeNavigator()
     }
 
-    private fun showViewError() {
-        binding.successLinearLayout.visibility = android.view.View.GONE
-        binding.loadingFrameLayout.visibility = android.view.View.GONE
-        binding.errorLinearLayout.visibility = android.view.View.VISIBLE
+    private fun initToolbar() {
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
     }
 
-    companion object {
-        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
-            "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
-    }
+//    override fun onBackPressed() {
+//        supportFragmentManager.fragments.forEach {
+//            if (it is BackButtonListener && it.backPressed()) {
+//                return
+//            }
+//        }
+//        presenter.backClicked()
+//    }
 }

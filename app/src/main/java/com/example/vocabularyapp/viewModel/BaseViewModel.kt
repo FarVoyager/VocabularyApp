@@ -15,5 +15,7 @@ abstract class BaseViewModel<T : AppState>(
 ) : ViewModel() {
     // Метод, благодаря которому Activity подписывается на изменение данных,
     // возвращает LiveData, через которую и передаются данные
+    abstract fun subscribe(): LiveData<AppState>
+
     abstract fun getData(word: String, isOnline: Boolean)
 }
