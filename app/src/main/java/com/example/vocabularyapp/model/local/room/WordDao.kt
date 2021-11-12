@@ -11,6 +11,9 @@ interface WordDao {
     @androidx.room.Query("SELECT * FROM Word")
     fun getAll(): List<Word>
 
+    @Query("SELECT * FROM Word WHERE word = :query")
+    fun getByWord(query: String): Word?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg words: Word)
 }

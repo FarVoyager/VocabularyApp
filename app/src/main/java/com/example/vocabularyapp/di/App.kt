@@ -21,7 +21,7 @@ class App: Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(KoinDI.getInteractorModule(), KoinDI.getScreensModule(), KoinDI.getDatabaseModule())
+            modules(KoinDI.getInteractorModule(), KoinDI.getDatabaseModule())
         }
     }
 }

@@ -4,15 +4,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.marginStart
 import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
+import com.example.vocabularyapp.AppState
 import com.example.vocabularyapp.R
+import com.example.vocabularyapp.model.DataModel
 import com.example.vocabularyapp.utils.screens.IScreens
-import com.example.vocabularyapp.viewModel.MainViewModel
 import com.example.vocabularyapp.viewModel.WordListViewModel
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
@@ -22,15 +24,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(){
 
-    private val model: MainViewModel by viewModel()
-    private val navigatorHolder by inject<NavigatorHolder>()
-    private val navigator = AppNavigator(this, android.R.id.content)
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        model.subscribe().observe(this, { })
         initToolbar()
         savedInstanceState ?: replaceFragment(R.id.main_activity_container, WordListFragment.newInstance())
     }
@@ -44,14 +40,15 @@ class MainActivity : AppCompatActivity(){
         when (item.itemId) {
             R.id.action_search -> {
                 val alertDialog = AlertDialog.Builder(this)
+                val editText = layoutInflater.inflate(R.layout.edit_text_search, null)
                 alertDialog
                     .setTitle("Поиск")
                     .setMessage("Введите слово для поиска")
-                    .setView(R.layout.edit_text_search)
+                    .setView(editText)
                     .setPositiveButton("OK") { _, _ ->
                         //получить текст и запросить в БД
-                        val query = findViewById<EditText>(R.id.edit_query).text
-                        replaceFragment(R.id.main_activity_container, DetailsFragment.newInstance())
+                        val text = editText.findViewById<EditText>(R.id.edit_query).text.toString()
+                        replaceFragment(R.id.main_activity_container, DetailsFragment.newInstance(text))
                     }
                     .setNegativeButton("Отмена") { dialog, _ ->
                         dialog.dismiss()
@@ -69,16 +66,6 @@ class MainActivity : AppCompatActivity(){
 
     private fun replaceFragment(layout: Int, fragment: Fragment) {
         supportFragmentManager.beginTransaction().addToBackStack(null).replace(layout, fragment).commit()
-    }
-
-    override fun onResumeFragments() {
-        super.onResumeFragments()
-        navigatorHolder.setNavigator(navigator)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        navigatorHolder.removeNavigator()
     }
 
     private fun initToolbar() {

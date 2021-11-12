@@ -3,7 +3,8 @@ package com.example.vocabularyapp.di.koin
 import androidx.room.Room
 import com.example.vocabularyapp.AppState
 import com.example.vocabularyapp.contracts.DataSource
-import com.example.vocabularyapp.contracts.Interactor
+import com.example.vocabularyapp.contracts.IHistoryInteractor
+import com.example.vocabularyapp.contracts.IMainInteractor
 import com.example.vocabularyapp.contracts.Repository
 import com.example.vocabularyapp.di.NAME_HISTORY
 import com.example.vocabularyapp.di.NAME_LOCAL
@@ -23,8 +24,8 @@ import com.example.vocabularyapp.model.remote.RetrofitImplementation
 import com.example.vocabularyapp.utils.isOnline
 import com.example.vocabularyapp.utils.screens.AndroidScreens
 import com.example.vocabularyapp.utils.screens.IScreens
+import com.example.vocabularyapp.viewModel.DetailsViewModel
 import com.example.vocabularyapp.viewModel.HistoryViewModel
-import com.example.vocabularyapp.viewModel.MainViewModel
 import com.example.vocabularyapp.viewModel.WordListViewModel
 import com.github.terrakok.cicerone.Cicerone
 import org.koin.android.ext.koin.androidContext
@@ -35,16 +36,8 @@ import org.koin.dsl.module
 
 object KoinDI {
 
-    private val cicerone = Cicerone.create()
-
     fun getDatabaseModule() = module {
         single { Room.databaseBuilder(androidContext(), Database::class.java, "database").build() }
-    }
-
-    fun getScreensModule() = module {
-        single { cicerone.getNavigatorHolder() }
-        single { cicerone.router }
-        single<IScreens> { AndroidScreens() }
     }
 
     fun getInteractorModule() = module {
@@ -60,18 +53,19 @@ object KoinDI {
 
         single<IDataSourceHistory<List<DataModel>>>(named(NAME_HISTORY)) { DataSourceHistory(historyProvider = get(named(SOURCE_HISTORY))) }
 
-        single<Interactor<AppState>>(named(INTERACTOR_MAIN)) { MainInteractor(
+        single<IMainInteractor<AppState>>(named(INTERACTOR_MAIN)) { MainInteractor(
             remoteRepository = get(named(NAME_REMOTE)),
             localRepository = get(named(NAME_LOCAL)),
             roomHistoryRepository = get(named(NAME_HISTORY))
             )
         }
 
-        single<Interactor<AppState>>(named(INTERACTOR_HISTORY)) { HistoryInteractor(roomHistoryRepository = get(named(NAME_HISTORY))) }
+        single<IHistoryInteractor<AppState>>(named(INTERACTOR_HISTORY)) { HistoryInteractor(roomHistoryRepository = get(named(NAME_HISTORY))) }
 
-        viewModel { MainViewModel() }
         viewModel { WordListViewModel(mainInteractor = get(named(INTERACTOR_MAIN)), historyInteractor = get(named(INTERACTOR_HISTORY))) }
         viewModel { HistoryViewModel(interactor = get(named(INTERACTOR_HISTORY))) }
+        viewModel { DetailsViewModel(historyInteractor = get(named(INTERACTOR_HISTORY))) }
+
     }
 }
 

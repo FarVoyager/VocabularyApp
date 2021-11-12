@@ -3,14 +3,13 @@ package com.example.vocabularyapp.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.vocabularyapp.AppState
-import com.example.vocabularyapp.contracts.Interactor
-import com.example.vocabularyapp.di.App
-import com.example.vocabularyapp.model.DataModel
+import com.example.vocabularyapp.contracts.IHistoryInteractor
+import com.example.vocabularyapp.contracts.IMainInteractor
 import kotlinx.coroutines.*
 
 class WordListViewModel(
-    private val mainInteractor: Interactor<AppState>,
-    private val historyInteractor: Interactor<AppState>,
+    private val mainInteractor: IMainInteractor<AppState>,
+    private val historyInteractor: IHistoryInteractor<AppState>,
 
     ): BaseViewModel<AppState>() {
 

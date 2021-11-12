@@ -2,12 +2,12 @@ package com.example.vocabularyapp.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.vocabularyapp.AppState
-import com.example.vocabularyapp.contracts.Interactor
+import com.example.vocabularyapp.contracts.IHistoryInteractor
+import com.example.vocabularyapp.contracts.IMainInteractor
 import kotlinx.coroutines.*
 
-class HistoryViewModel(private val interactor: Interactor<AppState>): BaseViewModel<AppState>() {
+class HistoryViewModel(private val interactor: IHistoryInteractor<AppState>): BaseViewModel<AppState>() {
     private val liveData: MutableLiveData<AppState> = MutableLiveData()
     private var jobGetData: Job? = null
 
@@ -27,7 +27,7 @@ class HistoryViewModel(private val interactor: Interactor<AppState>): BaseViewMo
         jobGetData?.cancel()
         // Запускаем корутину для асинхронного доступа к серверу с помощью launch
         jobGetData = viewModelCoroutineScope.launch {
-            liveData.postValue(interactor.getData(word, isOnline))
+            liveData.postValue(interactor.getData())
         }
     }
 
