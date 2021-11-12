@@ -6,6 +6,7 @@ import com.example.vocabularyapp.contracts.Repository
 import com.example.vocabularyapp.di.NAME_LOCAL
 import com.example.vocabularyapp.di.NAME_REMOTE
 import com.example.vocabularyapp.model.DataModel
+import com.example.vocabularyapp.model.local.room.IDataSourceHistory
 import io.reactivex.Observable
 import javax.inject.Inject
 import javax.inject.Named
@@ -13,7 +14,8 @@ import javax.inject.Named
 class MainInteractor (
     // Снабжаем интерактор репозиторием для получения локальных или внешних данных
     val remoteRepository: Repository<List<DataModel>>,
-    val localRepository: Repository<List<DataModel>>
+    val localRepository: Repository<List<DataModel>>,
+    val roomHistoryRepository: IDataSourceHistory<List<DataModel>>
 ): Interactor<AppState> {
     // Интерактор лишь запрашивает у репозитория данные, детали имплементации интерактору неизвестны
     override suspend fun getData(word: String, fromRemoteSource: Boolean): AppState {
@@ -23,5 +25,10 @@ class MainInteractor (
                 .getData(word)
         )
     }
+
+    override suspend fun insertData(data: List<DataModel>?) {
+        roomHistoryRepository.insertData(data)
+    }
+
 
 }

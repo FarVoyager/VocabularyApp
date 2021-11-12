@@ -11,7 +11,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.*
 
 abstract class BaseViewModel<T : AppState>(
-    protected val liveData: MutableLiveData<T> = MutableLiveData()
+//    protected val liveData: MutableLiveData<T> = MutableLiveData()
 ) : ViewModel() {
     // Метод, благодаря которому Activity подписывается на изменение данных,
     // возвращает LiveData, через которую и передаются данные

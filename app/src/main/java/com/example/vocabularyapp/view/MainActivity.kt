@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.marginStart
 import androidx.core.view.marginTop
+import androidx.fragment.app.Fragment
 import com.example.vocabularyapp.R
 import com.example.vocabularyapp.utils.screens.IScreens
 import com.example.vocabularyapp.viewModel.MainViewModel
@@ -21,9 +22,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(){
 
-    private val router by inject<Router>()
     private val model: MainViewModel by viewModel()
-    private val screens by inject<IScreens>()
     private val navigatorHolder by inject<NavigatorHolder>()
     private val navigator = AppNavigator(this, android.R.id.content)
 
@@ -33,7 +32,7 @@ class MainActivity : AppCompatActivity(){
         setContentView(R.layout.activity_main)
         model.subscribe().observe(this, { })
         initToolbar()
-        savedInstanceState ?: initMainFragment()
+        savedInstanceState ?: replaceFragment(R.id.main_activity_container, WordListFragment.newInstance())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -42,38 +41,34 @@ class MainActivity : AppCompatActivity(){
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-
-        when (id) {
+        when (item.itemId) {
             R.id.action_search -> {
-                println("BEB clicked")
-                val textInput = EditText(this)
                 val alertDialog = AlertDialog.Builder(this)
                 alertDialog
                     .setTitle("Поиск")
                     .setMessage("Введите слово для поиска")
                     .setView(R.layout.edit_text_search)
-                    .setPositiveButton("OK") { dialog, id ->
+                    .setPositiveButton("OK") { _, _ ->
                         //получить текст и запросить в БД
-
+                        val query = findViewById<EditText>(R.id.edit_query).text
+                        replaceFragment(R.id.main_activity_container, DetailsFragment.newInstance())
                     }
-                    .setNegativeButton("Отмена") { dialog, id ->
+                    .setNegativeButton("Отмена") { dialog, _ ->
                         dialog.dismiss()
                     }
                     .show()
                 return true
             }
             R.id.action_history -> {
-
-
+                replaceFragment(R.id.main_activity_container, HistoryFragment.newInstance())
                 return true
             }
         }
         return true
     }
 
-    private fun initMainFragment() {
-        supportFragmentManager.beginTransaction().replace(R.id.main_activity_container, WordListFragment.newInstance()).commit()
+    private fun replaceFragment(layout: Int, fragment: Fragment) {
+        supportFragmentManager.beginTransaction().addToBackStack(null).replace(layout, fragment).commit()
     }
 
     override fun onResumeFragments() {
@@ -90,13 +85,4 @@ class MainActivity : AppCompatActivity(){
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
     }
-
-//    override fun onBackPressed() {
-//        supportFragmentManager.fragments.forEach {
-//            if (it is BackButtonListener && it.backPressed()) {
-//                return
-//            }
-//        }
-//        presenter.backClicked()
-//    }
 }

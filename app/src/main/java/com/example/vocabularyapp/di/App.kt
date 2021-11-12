@@ -2,6 +2,7 @@ package com.example.vocabularyapp.di
 
 import android.app.Application
 import com.example.vocabularyapp.di.koin.KoinDI
+import com.example.vocabularyapp.model.local.room.Database
 import com.example.vocabularyapp.schedulerProvider.SchedulerProvider
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
@@ -20,7 +21,7 @@ class App: Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(KoinDI.getInteractorModule(), KoinDI.getScreensModule())
+            modules(KoinDI.getInteractorModule(), KoinDI.getScreensModule(), KoinDI.getDatabaseModule())
         }
     }
 }
