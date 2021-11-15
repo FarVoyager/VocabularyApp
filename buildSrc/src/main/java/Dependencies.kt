@@ -2,7 +2,7 @@ import org.gradle.api.JavaVersion
 
 object Config {
     const val application_id = "com.example.vocabularyapp"
-    const val compile_sdk = 30
+    const val compile_sdk = 31
     const val min_sdk = 21
     const val target_sdk = 30
     val java_version = JavaVersion.VERSION_1_8
@@ -102,7 +102,7 @@ object Versions {
     }
 
     object Cicerone {
-        const val cicerone = "com.github.terrakok:${Versions.cicerone}"
+        const val cicerone = "com.github.terrakok:cicerone:${Versions.cicerone}"
     }
 
     object Koin {

@@ -1,11 +1,9 @@
 package com.example.vocabularyapp.interactors
 
-import com.example.vocabularyapp.AppState
-import com.example.vocabularyapp.contracts.IHistoryInteractor
-import com.example.vocabularyapp.contracts.IMainInteractor
-import com.example.vocabularyapp.model.DataModel
-import com.example.vocabularyapp.model.local.room.Database
-import com.example.vocabularyapp.model.local.room.IDataSourceHistory
+import com.example.core.IHistoryInteractor
+import com.example.model.AppState
+import com.example.model.DataModel
+import com.example.repository.local.IDataSourceHistory
 
 class HistoryInteractor(
     private val roomHistoryRepository: IDataSourceHistory<List<DataModel>>

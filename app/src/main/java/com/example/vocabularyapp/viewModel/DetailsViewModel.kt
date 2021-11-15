@@ -2,10 +2,9 @@ package com.example.vocabularyapp.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.vocabularyapp.AppState
-import com.example.vocabularyapp.contracts.IHistoryInteractor
-import com.example.vocabularyapp.interactors.HistoryInteractor
+import com.example.core.BaseViewModel
+import com.example.core.IHistoryInteractor
+import com.example.model.AppState
 import kotlinx.coroutines.*
 
 class DetailsViewModel(private val historyInteractor: IHistoryInteractor<AppState>): BaseViewModel<AppState>() {

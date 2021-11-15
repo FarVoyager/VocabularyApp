@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="NO_INT_MSG">No Internet connection</string>
+</resources>

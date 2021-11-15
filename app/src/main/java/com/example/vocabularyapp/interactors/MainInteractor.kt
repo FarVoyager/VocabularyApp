@@ -1,10 +1,10 @@
 package com.example.vocabularyapp.interactors
 
-import com.example.vocabularyapp.AppState
-import com.example.vocabularyapp.contracts.IMainInteractor
-import com.example.vocabularyapp.contracts.Repository
-import com.example.vocabularyapp.model.DataModel
-import com.example.vocabularyapp.model.local.room.IDataSourceHistory
+import com.example.core.IMainInteractor
+import com.example.model.AppState
+import com.example.model.DataModel
+import com.example.repository.Repository
+import com.example.repository.local.IDataSourceHistory
 
 class MainInteractor (
     // Снабжаем интерактор репозиторием для получения локальных или внешних данных
