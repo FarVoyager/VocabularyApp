@@ -12,12 +12,23 @@ import com.example.vocabularyapp.R
 import com.example.vocabularyapp.databinding.FragmentMainBinding
 import com.example.vocabularyapp.view.main.SearchDialogFragment
 import com.example.vocabularyapp.viewModel.WordListViewModel
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.ScopeFragment
+import org.koin.androidx.scope.currentScope
+import org.koin.androidx.scope.fragmentScope
+import org.koin.androidx.viewmodel.ext.android.*
+import org.koin.androidx.viewmodel.scope.getViewModel
+import org.koin.androidx.viewmodel.scope.viewModel
+import org.koin.core.component.KoinScopeComponent
 import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 
 
-class WordListFragment : Fragment(R.layout.fragment_main) {
+class WordListFragment() : Fragment(R.layout.fragment_main) {
+
+
 
     private val model: WordListViewModel by viewModel()
     private val binding: FragmentMainBinding by viewBinding()

@@ -27,7 +27,4 @@ abstract class BaseActivity<T: AppState, I: IMainInteractor<T>> : AppCompatActiv
             Toast.makeText(this, getString(R.string.NO_INT_MSG), Toast.LENGTH_SHORT).show()
         }
     }
-
-    abstract fun renderData(appState: T)
-
 }

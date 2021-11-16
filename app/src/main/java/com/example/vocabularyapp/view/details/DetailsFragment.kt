@@ -57,7 +57,5 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
 
         const val WORD_KEY = "WORD_KEY"
-//        const val TRANSLATION_KEY = "TRANSLATION_KEY"
-
     }
 }

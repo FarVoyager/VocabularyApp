@@ -53,7 +53,7 @@ object KoinDI {
 
         single<IHistoryInteractor<AppState>>(named(INTERACTOR_HISTORY)) { HistoryInteractor(roomHistoryRepository = get(named(NAME_HISTORY))) }
 
-        viewModel { WordListViewModel(mainInteractor = get(named(INTERACTOR_MAIN)), historyInteractor = get(named(INTERACTOR_HISTORY))) }
+        viewModel { WordListViewModel(mainInteractor = get(named(INTERACTOR_MAIN))) }
         viewModel { HistoryViewModel(interactor = get(named(INTERACTOR_HISTORY))) }
         viewModel { DetailsViewModel(historyInteractor = get(named(INTERACTOR_HISTORY))) }
 
