@@ -10,8 +10,6 @@ import kotlinx.coroutines.*
 
 class WordListViewModel(
     private val mainInteractor: IMainInteractor<AppState>,
-    private val historyInteractor: IHistoryInteractor<AppState>,
-
     ): BaseViewModel<AppState>() {
 
     private val liveData: MutableLiveData<AppState> = MutableLiveData()
@@ -38,7 +36,6 @@ class WordListViewModel(
             liveData.postValue(data)
             when (data) {
                 is AppState.Success -> {
-                    println("BEB")
                     mainInteractor.insertData(data.data)
                 }
                 else -> {  }
@@ -50,10 +47,6 @@ class WordListViewModel(
      private fun handleError(error: Throwable) {
         liveData.postValue(AppState.Error(error))
     }
-
-//    private fun searchWordInHistory(text: String): DataModel {
-//        //
-//    }
 
     override fun onCleared() {
         liveData.postValue(AppState.Success(null))
