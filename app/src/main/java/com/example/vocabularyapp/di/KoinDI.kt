@@ -10,12 +10,8 @@ import com.example.repository.Repository
 import com.example.repository.RepositoryImplementation
 import com.example.repository.local.*
 import com.example.repository.remote.DataSourceRemote
-import com.example.vocabularyapp.di.NAME_HISTORY
-import com.example.vocabularyapp.di.NAME_LOCAL
-import com.example.vocabularyapp.di.NAME_REMOTE
 import com.example.vocabularyapp.interactors.HistoryInteractor
 import com.example.vocabularyapp.interactors.MainInteractor
-import com.example.vocabularyapp.utils.isOnline
 import com.example.vocabularyapp.view.details.DetailsFragment
 import com.example.vocabularyapp.view.history.HistoryFragment
 import com.example.vocabularyapp.view.wordList.WordListFragment
@@ -36,8 +32,6 @@ object KoinDI {
 
     fun getInteractorModule() = module {
 
-        single(named("context")) { isOnline(androidContext()) }
-
         factory<DataSource<List<DataModel>>>(named(SOURCE_REMOTE)) { DataSourceRemote() }
         factory<DataSource<List<DataModel>>>(named(SOURCE_LOCAL)) { DataSourceLocal(RoomDataBaseImplementation()) }
         factory<IDataSourceHistory<List<DataModel>>>(named(SOURCE_HISTORY)) { RoomHistoryImpl(db = get()) }
@@ -56,9 +50,8 @@ object KoinDI {
 
         single<IHistoryInteractor<AppState>>(named(INTERACTOR_HISTORY)) { HistoryInteractor(roomHistoryRepository = get(named(NAME_HISTORY))) }
 
-        scope<WordListFragment> {
             viewModel { WordListViewModel(mainInteractor = get(named(INTERACTOR_MAIN))) }
-        }
+
         scope<HistoryFragment> {
             viewModel { HistoryViewModel(interactor = get(named(INTERACTOR_HISTORY))) }
         }

@@ -40,7 +40,6 @@ class WordListViewModel(
                 }
                 else -> {  }
             }
-
         }
     }
 

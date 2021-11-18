@@ -3,11 +3,13 @@ package com.example.vocabularyapp.view.details
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.example.model.AppState
 import com.example.vocabularyapp.R
 import com.example.vocabularyapp.databinding.FragmentDetailsBinding
+import com.example.vocabularyapp.utils.OnlineLiveData
 import com.example.vocabularyapp.viewModel.DetailsViewModel
 import org.koin.android.scope.AndroidScopeComponent
 import org.koin.androidx.scope.fragmentScope
@@ -25,7 +27,20 @@ class DetailsFragment : Fragment(R.layout.fragment_details), AndroidScopeCompone
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model.subscribe().observe(viewLifecycleOwner, { renderData(it) })
-        model.getData(arguments?.getString(WORD_KEY).toString(), true)
+
+        startLoadingOrShowError()
+
+//        model.getData(arguments?.getString(WORD_KEY).toString(), true)
+    }
+
+    private fun startLoadingOrShowError() {
+        OnlineLiveData(requireContext()).observe(viewLifecycleOwner, {
+            if (it) {
+                model.getData(arguments?.getString(WORD_KEY).toString(), true)
+            } else {
+                Toast.makeText(requireContext(), "device is offline", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun renderData(appState: AppState) {
