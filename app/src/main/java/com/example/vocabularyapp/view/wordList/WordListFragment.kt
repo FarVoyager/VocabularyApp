@@ -5,13 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.model.AppState
 import com.example.model.DataModel
 import com.example.vocabularyapp.R
 import com.example.vocabularyapp.databinding.FragmentMainBinding
+import com.example.vocabularyapp.utils.viewById
 import com.example.vocabularyapp.view.main.SearchDialogFragment
 import com.example.vocabularyapp.viewModel.WordListViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.AndroidScopeComponent
@@ -26,7 +29,7 @@ import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 
 
-class WordListFragment() : Fragment(R.layout.fragment_main), AndroidScopeComponent {
+class WordListFragment : Fragment(R.layout.fragment_main), AndroidScopeComponent {
 
     override val scope: Scope by fragmentScope()
     private val model: WordListViewModel by scope.inject()
@@ -43,6 +46,8 @@ class WordListFragment() : Fragment(R.layout.fragment_main), AndroidScopeCompone
             }
         }
 
+    private val searchFab by viewById<FloatingActionButton>(R.id.search_fab)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isNetworkAvailable = isOnline
@@ -54,7 +59,7 @@ class WordListFragment() : Fragment(R.layout.fragment_main), AndroidScopeCompone
         model.subscribe().observe(viewLifecycleOwner, { renderData(it) })
 
         // Обработка нажатия fab
-        binding.searchFab.setOnClickListener {
+        searchFab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
