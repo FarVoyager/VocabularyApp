@@ -16,6 +16,9 @@ import com.example.vocabularyapp.di.NAME_REMOTE
 import com.example.vocabularyapp.interactors.HistoryInteractor
 import com.example.vocabularyapp.interactors.MainInteractor
 import com.example.vocabularyapp.utils.isOnline
+import com.example.vocabularyapp.view.details.DetailsFragment
+import com.example.vocabularyapp.view.history.HistoryFragment
+import com.example.vocabularyapp.view.wordList.WordListFragment
 import com.example.vocabularyapp.viewModel.DetailsViewModel
 import com.example.vocabularyapp.viewModel.HistoryViewModel
 import com.example.vocabularyapp.viewModel.WordListViewModel
@@ -53,10 +56,15 @@ object KoinDI {
 
         single<IHistoryInteractor<AppState>>(named(INTERACTOR_HISTORY)) { HistoryInteractor(roomHistoryRepository = get(named(NAME_HISTORY))) }
 
-        viewModel { WordListViewModel(mainInteractor = get(named(INTERACTOR_MAIN))) }
-        viewModel { HistoryViewModel(interactor = get(named(INTERACTOR_HISTORY))) }
-        viewModel { DetailsViewModel(historyInteractor = get(named(INTERACTOR_HISTORY))) }
-
+        scope<WordListFragment> {
+            viewModel { WordListViewModel(mainInteractor = get(named(INTERACTOR_MAIN))) }
+        }
+        scope<HistoryFragment> {
+            viewModel { HistoryViewModel(interactor = get(named(INTERACTOR_HISTORY))) }
+        }
+        scope<DetailsFragment> {
+            viewModel { DetailsViewModel(historyInteractor = get(named(INTERACTOR_HISTORY))) }
+        }
     }
 }
 

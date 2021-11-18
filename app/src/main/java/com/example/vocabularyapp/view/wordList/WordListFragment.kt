@@ -26,11 +26,10 @@ import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 
 
-class WordListFragment() : Fragment(R.layout.fragment_main) {
+class WordListFragment() : Fragment(R.layout.fragment_main), AndroidScopeComponent {
 
-
-
-    private val model: WordListViewModel by viewModel()
+    override val scope: Scope by fragmentScope()
+    private val model: WordListViewModel by scope.inject()
     private val binding: FragmentMainBinding by viewBinding()
 
     private val isOnline: Boolean by inject(named("context"))

@@ -9,13 +9,17 @@ import com.example.model.AppState
 import com.example.vocabularyapp.R
 import com.example.vocabularyapp.databinding.FragmentDetailsBinding
 import com.example.vocabularyapp.viewModel.DetailsViewModel
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.fragmentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.scope.Scope
 import kotlin.random.Random
 
 
-class DetailsFragment : Fragment(R.layout.fragment_details) {
+class DetailsFragment : Fragment(R.layout.fragment_details), AndroidScopeComponent {
 
-    private val model: DetailsViewModel by viewModel()
+    override val scope: Scope by fragmentScope()
+    private val model: DetailsViewModel by scope.inject()
     private val binding: FragmentDetailsBinding by viewBinding()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

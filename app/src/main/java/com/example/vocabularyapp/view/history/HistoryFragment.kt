@@ -11,11 +11,15 @@ import com.example.model.DataModel
 import com.example.vocabularyapp.R
 import com.example.vocabularyapp.databinding.FragmentHistoryBinding
 import com.example.vocabularyapp.viewModel.HistoryViewModel
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.fragmentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.scope.Scope
 
-class HistoryFragment : Fragment(R.layout.fragment_history) {
+class HistoryFragment : Fragment(R.layout.fragment_history), AndroidScopeComponent {
 
-    private val model: HistoryViewModel by viewModel()
+    override val scope: Scope by fragmentScope()
+    private val model: HistoryViewModel by scope.inject()
     private val binding: FragmentHistoryBinding by viewBinding()
 
     private var adapter: HistoryRvAdapter? = null
