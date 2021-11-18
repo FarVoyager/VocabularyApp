@@ -5,26 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.model.AppState
 import com.example.model.DataModel
 import com.example.vocabularyapp.R
 import com.example.vocabularyapp.databinding.FragmentMainBinding
+import com.example.vocabularyapp.utils.OnlineLiveData
 import com.example.vocabularyapp.utils.viewById
 import com.example.vocabularyapp.view.main.SearchDialogFragment
 import com.example.vocabularyapp.viewModel.WordListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.AndroidScopeComponent
-import org.koin.androidx.scope.ScopeFragment
-import org.koin.androidx.scope.currentScope
 import org.koin.androidx.scope.fragmentScope
-import org.koin.androidx.viewmodel.ext.android.*
-import org.koin.androidx.viewmodel.scope.getViewModel
-import org.koin.androidx.viewmodel.scope.viewModel
-import org.koin.core.component.KoinScopeComponent
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 
@@ -32,11 +26,10 @@ import org.koin.core.scope.Scope
 class WordListFragment : Fragment(R.layout.fragment_main), AndroidScopeComponent {
 
     override val scope: Scope by fragmentScope()
-    private val model: WordListViewModel by scope.inject()
+    private val model: WordListViewModel by viewModel()
     private val binding: FragmentMainBinding by viewBinding()
 
-    private val isOnline: Boolean by inject(named("context"))
-    private var isNetworkAvailable = false
+    private var isNetworkAvailable = true
 
     private var adapter: MainAdapter? = null
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
@@ -48,13 +41,23 @@ class WordListFragment : Fragment(R.layout.fragment_main), AndroidScopeComponent
 
     private val searchFab by viewById<FloatingActionButton>(R.id.search_fab)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        isNetworkAvailable = isOnline
+    private fun subscribeToNetworkChange() {
+        OnlineLiveData(requireContext()).observe(viewLifecycleOwner, {
+            val oldState = isNetworkAvailable
+            isNetworkAvailable = it
+            if (!isNetworkAvailable) {
+                Toast.makeText(requireContext(),"device is offline", Toast.LENGTH_SHORT).show()
+            } else if (isNetworkAvailable != oldState) {
+                Toast.makeText(requireContext(),"internet connection restored", Toast.LENGTH_SHORT).show()
+
+            }
+        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        subscribeToNetworkChange()
+
         // Подписываемся на изменения MainViewModel
         model.subscribe().observe(viewLifecycleOwner, { renderData(it) })
 
@@ -93,12 +96,12 @@ class WordListFragment : Fragment(R.layout.fragment_main), AndroidScopeComponent
             is AppState.Loading -> {
                 showViewLoading()
                 if (appState.progress != null) {
-                    binding.progressBarHorizontal.visibility = android.view.View.VISIBLE
-                    binding.progressBarRound.visibility = android.view.View.GONE
+                    binding.progressBarHorizontal.visibility = View.VISIBLE
+                    binding.progressBarRound.visibility = View.GONE
                     binding.progressBarHorizontal.progress = appState.progress!!
                 } else {
-                    binding.progressBarHorizontal.visibility = android.view.View.GONE
-                    binding.progressBarRound.visibility = android.view.View.VISIBLE
+                    binding.progressBarHorizontal.visibility = View.GONE
+                    binding.progressBarRound.visibility = View.VISIBLE
                 }
             }
             is AppState.Error -> {
@@ -136,7 +139,6 @@ class WordListFragment : Fragment(R.layout.fragment_main), AndroidScopeComponent
 
     override fun onResume() {
         super.onResume()
-        isNetworkAvailable = isOnline
         if (!isNetworkAvailable) {
             Toast.makeText(requireContext(), getString(R.string.NO_INT_MSG), Toast.LENGTH_SHORT).show()
         }
