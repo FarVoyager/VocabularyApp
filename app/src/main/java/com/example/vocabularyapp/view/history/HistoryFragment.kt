@@ -1,0 +1,73 @@
+package com.example.vocabularyapp.view.history
+
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.View
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import by.kirich1409.viewbindingdelegate.viewBinding
+import com.example.model.AppState
+import com.example.model.DataModel
+import com.example.vocabularyapp.R
+import com.example.vocabularyapp.databinding.FragmentHistoryBinding
+import com.example.vocabularyapp.viewModel.HistoryViewModel
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.fragmentScope
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.scope.Scope
+
+class HistoryFragment : Fragment(R.layout.fragment_history), AndroidScopeComponent {
+
+    override val scope: Scope by fragmentScope()
+    private val model: HistoryViewModel by scope.inject()
+    private val binding: FragmentHistoryBinding by viewBinding()
+
+    private var adapter: HistoryRvAdapter? = null
+    private val onListItemClickListener: HistoryRvAdapter.OnListItemClickListener =
+        object : HistoryRvAdapter.OnListItemClickListener {
+            override fun onItemClick(data: DataModel) {
+                Toast.makeText(requireContext(), data.text, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        model.subscribe().observe(viewLifecycleOwner, { renderData(it) })
+        model.getData("word", true)
+
+    }
+
+    private fun renderData(data: AppState) {
+        when (data) {
+            is AppState.Success -> {
+                val historyData = data.data
+                if (historyData.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "История пуста", Toast.LENGTH_SHORT).show()
+                } else {
+                    if (adapter == null) {
+
+                        binding.historyRv.layoutManager = LinearLayoutManager(requireContext()).apply {
+                            reverseLayout = true
+                            stackFromEnd = true
+                        }
+                        binding.historyRv.adapter = HistoryRvAdapter(onListItemClickListener, historyData)
+                    } else {
+                        adapter!!.setData(historyData)
+                    }
+                }
+            }
+            is AppState.Error -> {
+                println("AppState.Error")
+
+            }
+            is AppState.Loading -> {
+                println("AppState.Loading")
+            }
+        }
+}
+
+companion object {
+    @JvmStatic
+    fun newInstance() = HistoryFragment()
+}
+}
