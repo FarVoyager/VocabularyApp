@@ -1,11 +1,15 @@
 package com.example.vocabularyapp.view.main
 
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 
 import com.example.vocabularyapp.databinding.DialogTranslationBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -27,6 +31,7 @@ class SearchDialogFragment: BottomSheetDialogFragment() {
             }
         }
 
+
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable?) {}
     }
@@ -40,11 +45,27 @@ class SearchDialogFragment: BottomSheetDialogFragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.searchButtonTextview.setOnClickListener(onSearchButtonClickListener)
         binding.searchEditText.addTextChangedListener(textWatcher)
         addOnClearClickListener()
+        setBackgroundBlurEffect()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun setBackgroundBlurEffect() {
+        parentFragment?.view?.setRenderEffect(RenderEffect.createBlurEffect(5f, 5f, Shader.TileMode.REPEAT))
+        activity?.window?.decorView?.setRenderEffect(RenderEffect.createBlurEffect(5f, 5f, Shader.TileMode.REPEAT))
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    override fun onStop() {
+        parentFragment?.view?.setRenderEffect(null)
+        activity?.window?.decorView?.setRenderEffect(null)
+        super.onStop()
     }
 
     private fun addOnClearClickListener() {

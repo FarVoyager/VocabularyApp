@@ -71,6 +71,17 @@ dependencies {
     implementation Glide.glide
     kapt Glide.compiler
 
+    // Retrofit 2
+    implementation Retrofit.retrofit
+    implementation Retrofit.converter_gson
+    implementation Retrofit.logging_interceptor
+    implementation Retrofit.rxJava_adapter
+    implementation Retrofit.coroutines_adapter
+    implementation Retrofit.legacy_support
+
+    implementation Retrofit.runtime
+    kapt Retrofit.room_compiler
+
     //View
     implementation View.appCompat
     implementation View.material
