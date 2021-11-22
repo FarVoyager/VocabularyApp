@@ -8,6 +8,35 @@
     android:fitsSystemWindows="true"
     tools:context=".view.wordList.WordListFragment">
 
+    <FrameLayout
+        android:id="@+id/frame_start_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/color_black"
+        >
+
+        <TextView
+            android:id="@+id/frame_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/start_text"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reload_button"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/reload_button"
+            android:visibility="gone"/>
+
+    </FrameLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -56,26 +85,6 @@
                 android:layout_gravity="center" />
         </FrameLayout>
 
-        <LinearLayout
-            android:id="@+id/error_linear_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/error_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/error_textview_stub" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/reload_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/reload_button" />
-        </LinearLayout>
 
     </LinearLayout>
 

@@ -1,9 +1,11 @@
 package com.example.vocabularyapp.view.main
 
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -16,13 +18,12 @@ import com.example.vocabularyapp.view.wordList.WordListFragment
 
 class MainActivity : AppCompatActivity(){
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initToolbar()
-        savedInstanceState ?: replaceFragment(R.id.main_activity_container,
-            WordListFragment.newInstance()
-        )
+        savedInstanceState ?: supportFragmentManager.beginTransaction().replace(R.id.main_activity_container, WordListFragment.newInstance()).commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

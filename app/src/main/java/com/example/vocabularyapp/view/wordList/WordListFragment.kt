@@ -1,9 +1,13 @@
 package com.example.vocabularyapp.view.wordList
 
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.model.AppState
@@ -39,6 +43,7 @@ class WordListFragment : Fragment(R.layout.fragment_main) {
         }
 
     private val searchFab by viewById<FloatingActionButton>(R.id.search_fab)
+    private val searchDialogFragment = SearchDialogFragment.newInstance()
 
     private fun subscribeToNetworkChange() {
         OnlineLiveData(requireContext()).observe(viewLifecycleOwner, {
@@ -53,6 +58,8 @@ class WordListFragment : Fragment(R.layout.fragment_main) {
         })
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeToNetworkChange()
@@ -62,18 +69,21 @@ class WordListFragment : Fragment(R.layout.fragment_main) {
 
         // Обработка нажатия fab
         searchFab.setOnClickListener {
-            val searchDialogFragment = SearchDialogFragment.newInstance()
-            searchDialogFragment.setOnSearchClickListener(object :
-                SearchDialogFragment.OnSearchClickListener {
-                override fun onClick(searchWord: String) {
-                    // У ViewModel мы получаем LiveData через метод getData
-                    model.getData(searchWord, isNetworkAvailable)
-                }
-            })
-            searchDialogFragment.show(parentFragmentManager,
-                BOTTOM_SHEET_FRAGMENT_DIALOG_TAG
-            )
+            initDialogFragment()
         }
+    }
+
+    private fun initDialogFragment() {
+        searchDialogFragment.setOnSearchClickListener(object :
+            SearchDialogFragment.OnSearchClickListener {
+            override fun onClick(searchWord: String) {
+                // У ViewModel мы получаем LiveData через метод getData
+                model.getData(searchWord, isNetworkAvailable)
+            }
+        })
+        searchDialogFragment.show(childFragmentManager,
+            BOTTOM_SHEET_FRAGMENT_DIALOG_TAG
+        )
     }
 
     private fun renderData(appState: AppState) {
@@ -111,28 +121,31 @@ class WordListFragment : Fragment(R.layout.fragment_main) {
 
     private fun showErrorScreen(error: String?) {
         showViewError()
-        binding.errorTextview.text = error ?: getString(R.string.undefined_error)
+        binding.frameTextView.text = "Ничего не найдено"
+//        binding.errorTextview.text = error ?: getString(R.string.undefined_error)
         binding.reloadButton.setOnClickListener {
-            model.getData("hi", true)
+            initDialogFragment()
+
         }
     }
 
     private fun showViewSuccess() {
+        binding.frameStartSearch.visibility = View.GONE
         binding.successLinearLayout.visibility = View.VISIBLE
         binding.loadingFrameLayout.visibility = View.GONE
-        binding.errorLinearLayout.visibility = View.GONE
     }
 
     private fun showViewLoading() {
         binding.successLinearLayout.visibility = View.GONE
         binding.loadingFrameLayout.visibility = View.VISIBLE
-        binding.errorLinearLayout.visibility = View.GONE
+        binding.frameStartSearch.visibility = View.GONE
     }
 
     private fun showViewError() {
         binding.successLinearLayout.visibility = View.GONE
         binding.loadingFrameLayout.visibility = View.GONE
-        binding.errorLinearLayout.visibility = View.VISIBLE
+        binding.frameStartSearch.visibility = View.VISIBLE
+        binding.reloadButton.visibility = View.VISIBLE
     }
 
 
@@ -143,10 +156,7 @@ class WordListFragment : Fragment(R.layout.fragment_main) {
         }
     }
 
-
-
     companion object {
-
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
         @JvmStatic
